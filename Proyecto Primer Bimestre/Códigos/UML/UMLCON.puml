@@ -1,0 +1,33 @@
+@startuml
+
+interface PoliticaDescuento {
+    +calcularDescuento(monto: double): double
+}
+
+class DescuentoEstudiante implements PoliticaDescuento {
+    +calcularDescuento(monto: double): double
+}
+
+class DescuentoTerceraEdad implements PoliticaDescuento {
+    +calcularDescuento(monto: double): double
+}
+
+class DescuentoEmpleado implements PoliticaDescuento {
+    +calcularDescuento(monto: double): double
+}
+
+class CalculadoraDescuentos {
+    +aplicarDescuento(politica: PoliticaDescuento, monto: double): double
+}
+
+class AplicacionPrincipal {
+    +main(args: String[]): void
+}
+
+AplicacionPrincipal --> CalculadoraDescuentos
+CalculadoraDescuentos --> PoliticaDescuento
+PoliticaDescuento <|.. DescuentoEstudiante
+PoliticaDescuento <|.. DescuentoTerceraEdad
+PoliticaDescuento <|.. DescuentoEmpleado
+
+@enduml
