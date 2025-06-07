@@ -1,0 +1,13 @@
+@startuml
+
+class CalculadoraDescuentos {
+    +calcularDescuento(tipoCliente: String, monto: double): double
+}
+
+class Main {
+    +main(args: String[]): void
+}
+
+Main --> CalculadoraDescuentos
+
+@enduml
