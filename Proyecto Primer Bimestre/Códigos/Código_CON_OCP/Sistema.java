@@ -155,30 +155,30 @@ public class Sistema {
             String correo = sc.nextLine().trim();
 
             switch (op) {
-                case 1 -> {
+                case 1 :
                     System.out.print("Ingrese el código único: ");
                     String codigoUnico = sc.nextLine().trim();
                     System.out.print("Ingrese el nivel académico (pregrado/posgrado): ");
                     String nivelAcademico = sc.nextLine().trim();
                     estudiantes.add(new Estudiante(nombre, apellido, idBiblioteca, edad, correo, codigoUnico, nivelAcademico));
                     System.out.println("Estudiante registrado.");
-                }
-                case 2 -> {
+                
+                case 2 :
                     System.out.print("Ingrese el departamento: ");
                     String departamento = sc.nextLine().trim();
                     System.out.print("Ingrese el título académico: ");
                     String tituloAcademico = sc.nextLine().trim();
                     profesores.add(new Profesor(nombre, apellido, idBiblioteca, edad, correo, departamento, tituloAcademico));
                     System.out.println("Profesor registrado.");
-                }
-                case 3 -> {
+                
+                case 3 :
                     System.out.print("Ingrese la ciudad: ");
                     String ciudad = sc.nextLine().trim();
                     System.out.print("¿Es extranjero? (sí/no): ");
                     boolean extranjero = sc.nextLine().trim().equalsIgnoreCase("sí");
                     visitantes.add(new Visitante(nombre, apellido, idBiblioteca, edad, correo, ciudad, extranjero));
                     System.out.println("Visitante registrado.");
-                }
+                
             }
             submenu = false;
         }
@@ -254,22 +254,22 @@ public class Sistema {
             String autor = sc.nextLine().trim();
 
             switch (op) {
-                case 1 -> {
+                case 1 :
                     System.out.print("Ingrese la editorial: ");
                     String editorial = sc.nextLine().trim();
                     System.out.print("Ingrese el código ISBN: ");
                     String isbn = sc.nextLine().trim();
                     libros.add(new Libro(id, titulo, autor, editorial, isbn));
                     System.out.println("Libro registrado.");
-                }
-                case 2 -> {
+                
+                case 2 : 
                     System.out.print("Ingrese el género: ");
                     String genero = sc.nextLine().trim();
                     System.out.print("Ingrese el formato: ");
                     String formato = sc.nextLine().trim();
                     dvds.add(new DvD(id, titulo, autor, genero, formato));
                     System.out.println("DVD registrado.");
-                }
+                
             }
             submenu = false;
         }
@@ -287,15 +287,16 @@ public class Sistema {
 
             int op = leerOpcion(sc, 1, 4);
             switch (op) {
-                case 1 -> {
+                case 1 :
                     System.out.print("Ingrese el ID del usuario: ");
                     int idUsuario = leerOpcion(sc, 1000, 5000);
                     System.out.print("Ingrese el ID del material: ");
                     String idMaterial = sc.nextLine().trim();
 
                     Usuario usuario = buscarUsuario(idUsuario);
+                    String finalIdMaterial1 = idMaterial;
                     Materiales material = Stream.concat(dvds.stream(), libros.stream())
-                            .filter(m -> m.getId().equals(idMaterial))
+                            .filter(m -> m.getId().equals(finalIdMaterial1))
                             .findFirst()
                             .orElse(null);
 
@@ -314,12 +315,13 @@ public class Sistema {
                         material.setHabilitado(false);
                         System.out.println("Préstamo registrado.");
                     }
-                }
-                case 2 -> {
+                
+                case 2 :
                     System.out.print("Ingrese el ID del material a devolver: ");
-                    String idMaterial = sc.nextLine().trim();
+                    idMaterial = sc.nextLine().trim();
+                    String finalIdMaterial = idMaterial;
                     Prestamo prestamo = prestamos.stream()
-                            .filter(p -> p.getMaterial().getId().equals(idMaterial) && p.isActivo())
+                            .filter(p -> p.getMaterial().getId().equals(finalIdMaterial) && p.isActivo())
                             .findFirst()
                             .orElse(null);
                     if (prestamo != null) {
@@ -333,8 +335,8 @@ public class Sistema {
                     } else {
                         System.out.println("Préstamo no encontrado.");
                     }
-                }
-                case 3 -> {
+                
+                case 3 :
                     if (prestamos.isEmpty()) {
                         System.out.println("No hay préstamos activos.");
                     } else {
@@ -348,8 +350,9 @@ public class Sistema {
                             }
                         }
                     }
-                }
-                case 4 -> submenu = false;
+                
+                case 4 :
+                    submenu = false;
             }
         }
     }
