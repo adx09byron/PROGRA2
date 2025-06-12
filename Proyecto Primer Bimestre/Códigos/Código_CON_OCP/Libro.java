@@ -1,45 +1,34 @@
 package org.example;
 
-
-public class Libro implements Materiales {
+public class Libro implements Material {
     private String id;
     private String titulo;
     private String autor;
     private String editorial;
-    private String IBSN;
+    private String isbn;
     private boolean habilitado;
 
-    public Libro(String id, String titulo, String autor, String editorial, String IBSN) {
+    public Libro(String id, String titulo, String autor, String editorial, String isbn) {
         this.id = id;
         this.titulo = titulo;
         this.autor = autor;
-        this.habilitado = true;
         this.editorial = editorial;
-        this.IBSN = IBSN;
+        this.isbn = isbn;
+        this.habilitado = true;
     }
 
     @Override
-    public String getId(){
-        return id;
-    }
+    public String getId() { return id; }
     @Override
-    public String getTitulo(){
-        return titulo;
-    }
+    public String getTitulo() { return titulo; }
     @Override
-    public String getAutor(){
-        return autor;
-    }
+    public boolean isHabilitado() { return habilitado; }
     @Override
-    public boolean isHabilitado(){
-        return habilitado;
-    }
-    @Override
-    public void setHabilitado(boolean habilitado){
-        this.habilitado = habilitado;
-    }
+    public void setHabilitado(boolean habilitado) { this.habilitado = habilitado; }
 
-    public void mostrarMaterial(){
-        System.out.println("Libro: " + titulo + "\nAutor: " + autor + "\nID: " + id  + "\nEditorial: " + editorial + "\nNumero internacional: " + IBSN + "\nDisponible: " + (habilitado ? "Sí" : "No"));
+    @Override
+    public void mostrarMaterial() {
+        System.out.printf("Libro: %s, ID: %s, Autor: %s, Editorial: %s, ISBN: %s, Habilitado: %b%n",
+                titulo, id, autor, editorial, isbn, habilitado);
     }
 }
