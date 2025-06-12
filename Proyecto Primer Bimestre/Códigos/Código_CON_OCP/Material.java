@@ -1,6 +1,6 @@
 package org.example;
 
-public interface Materiales {
+public interface Material {
     String getId();
     String getTitulo();
     boolean isHabilitado();
