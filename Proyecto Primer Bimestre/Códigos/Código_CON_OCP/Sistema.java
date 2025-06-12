@@ -3,14 +3,11 @@ package org.example;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Random;
-import java.util.stream.Stream;
-public class Sistema {
-    private static ArrayList<Usuario> estudiantes = new ArrayList<>();
-    private static ArrayList<Usuario> profesores = new ArrayList<>();
-    private static ArrayList<Usuario> visitantes = new ArrayList<>();
-    private static ArrayList<Materiales> dvds = new ArrayList<>();
-    private static ArrayList<Materiales> libros = new ArrayList<>();
+
+
+public class Main {
+    private static ArrayList<Usuario> usuarios = new ArrayList<>();
+    private static ArrayList<Material> materiales = new ArrayList<>();
     private static ArrayList<Prestamo> prestamos = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -27,17 +24,19 @@ public class Sistema {
 
             int op = leerOpcion(sc, 1, 4);
             switch (op) {
-                case 1 :
+                case 1:
                     gestionarClientes(sc);
-                case 2 :
+                    break;
+                case 2:
                     gestionarMateriales(sc);
-                case 3 :
+                    break;
+                case 3:
                     gestionarPrestamos(sc);
-                case 4 :
-                
+                    break;
+                case 4:
                     System.out.println("Saliendo del programa. ¡Gracias por usar!");
                     menu = false;
-                
+                    break;
             }
         }
         sc.close();
@@ -70,12 +69,13 @@ public class Sistema {
 
             int op = leerOpcion(sc, 1, 4);
             switch (op) {
-                case 1 :
+                case 1:
                     agregarCliente(sc);
-                case 2 :
+                    break;
+                case 2:
                     mostrarClientes();
-                case 3 :
-                
+                    break;
+                case 3:
                     System.out.print("Ingrese el ID del cliente a eliminar: ");
                     int idEliminar = leerOpcion(sc, 1000, 5000);
                     if (eliminarCliente(idEliminar)) {
@@ -83,48 +83,12 @@ public class Sistema {
                     } else {
                         System.out.println("Cliente no encontrado.");
                     }
-                
-                case 4 :
+                    break;
+                case 4:
                     submenu = false;
+                    break;
             }
         }
-    }
-
-    private static void mostrarClientes() {
-        System.out.println("****** Lista de Clientes ******");
-        if (estudiantes.isEmpty()) {
-            System.out.println("No hay estudiantes registrados.");
-        } else {
-            System.out.println("Estudiantes:");
-            for (Usuario estudiante : estudiantes) {
-                estudiante.mostrarCliente();
-                System.out.println("-------------------");
-            }
-        }
-        if (profesores.isEmpty()) {
-            System.out.println("No hay profesores registrados.");
-        } else {
-            System.out.println("Profesores:");
-            for (Usuario profesor : profesores) {
-                profesor.mostrarCliente();
-                System.out.println("-------------------");
-            }
-        }
-        if (visitantes.isEmpty()) {
-            System.out.println("No hay visitantes registrados.");
-        } else {
-            System.out.println("Visitantes:");
-            for (Usuario visitante : visitantes) {
-                visitante.mostrarCliente();
-                System.out.println("-------------------");
-            }
-        }
-    }
-
-    private static boolean eliminarCliente(int idEliminar) {
-        return estudiantes.removeIf(u -> u.getIdBiblioteca() == idEliminar) ||
-                profesores.removeIf(u -> u.getIdBiblioteca() == idEliminar) ||
-                visitantes.removeIf(u -> u.getIdBiblioteca() == idEliminar);
     }
 
     private static void agregarCliente(Scanner sc) {
@@ -143,45 +107,38 @@ public class Sistema {
                 continue;
             }
 
-            Random random = new Random();
-            System.out.print("Ingrese el nombre: ");
-            String nombre = sc.nextLine().trim();
-            System.out.print("Ingrese el apellido: ");
-            String apellido = sc.nextLine().trim();
-            int idBiblioteca = random.nextInt(4001) + 1000;
-            System.out.print("Ingrese la edad: ");
-            int edad = leerOpcion(sc, 1, 100);
-            System.out.print("Ingrese el correo electrónico: ");
-            String correo = sc.nextLine().trim();
+            String tipo = switch (op) {
+                case 1 -> "estudiante";
+                case 2 -> "profesor";
+                case 3 -> "visitante";
+                default -> "";
+            };
 
-            switch (op) {
-                case 1 :
-                    System.out.print("Ingrese el código único: ");
-                    String codigoUnico = sc.nextLine().trim();
-                    System.out.print("Ingrese el nivel académico (pregrado/posgrado): ");
-                    String nivelAcademico = sc.nextLine().trim();
-                    estudiantes.add(new Estudiante(nombre, apellido, idBiblioteca, edad, correo, codigoUnico, nivelAcademico));
-                    System.out.println("Estudiante registrado.");
-                
-                case 2 :
-                    System.out.print("Ingrese el departamento: ");
-                    String departamento = sc.nextLine().trim();
-                    System.out.print("Ingrese el título académico: ");
-                    String tituloAcademico = sc.nextLine().trim();
-                    profesores.add(new Profesor(nombre, apellido, idBiblioteca, edad, correo, departamento, tituloAcademico));
-                    System.out.println("Profesor registrado.");
-                
-                case 3 :
-                    System.out.print("Ingrese la ciudad: ");
-                    String ciudad = sc.nextLine().trim();
-                    System.out.print("¿Es extranjero? (sí/no): ");
-                    boolean extranjero = sc.nextLine().trim().equalsIgnoreCase("sí");
-                    visitantes.add(new Visitante(nombre, apellido, idBiblioteca, edad, correo, ciudad, extranjero));
-                    System.out.println("Visitante registrado.");
-                
+            try {
+                Usuario usuario = UsuarioFactory.crearUsuario(sc, tipo);
+                usuarios.add(usuario);
+                System.out.println(tipo.substring(0, 1).toUpperCase() + tipo.substring(1) + " registrado.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
             }
             submenu = false;
         }
+    }
+
+    private static void mostrarClientes() {
+        System.out.println("****** Lista de Clientes ******");
+        if (usuarios.isEmpty()) {
+            System.out.println("No hay clientes registrados.");
+        } else {
+            usuarios.forEach(u -> {
+                u.mostrarCliente();
+                System.out.println("-------------------");
+            });
+        }
+    }
+
+    private static boolean eliminarCliente(int idEliminar) {
+        return usuarios.removeIf(u -> u.getIdBiblioteca() == idEliminar);
     }
 
     private static void gestionarMateriales(Scanner sc) {
@@ -192,7 +149,7 @@ public class Sistema {
             System.out.println("2. Ver lista de materiales");
             System.out.println("3. Eliminar material");
             System.out.println("4. Regresar");
-            System.out.println("Ingrese una opción: ");
+            System.out.print("Ingrese una opción: ");
 
             int op = leerOpcion(sc, 1, 4);
             switch (op) {
@@ -200,24 +157,20 @@ public class Sistema {
                     agregarMaterial(sc);
                     break;
                 case 2:
-                    if (dvds.isEmpty() && libros.isEmpty()) {
+                    if (materiales.isEmpty()) {
                         System.out.println("No hay materiales registrados.");
                     } else {
                         System.out.println("****** Lista de Materiales ******");
-                        dvds.forEach(m -> {
-                            m.mostrarMaterial();
-                            System.out.println("-------------------");
-                        });
-                        libros.forEach(m -> {
+                        materiales.forEach(m -> {
                             m.mostrarMaterial();
                             System.out.println("-------------------");
                         });
                     }
                     break;
                 case 3:
-                    System.out.println("Ingrese el ID del material a eliminar:");
+                    System.out.print("Ingrese el ID del material a eliminar: ");
                     String idEliminar = sc.nextLine().trim();
-                    boolean removed = dvds.removeIf(m -> m.getId().equals(idEliminar)) || libros.removeIf(m -> m.getId().equals(idEliminar));
+                    boolean removed = materiales.removeIf(m -> m.getId().equals(idEliminar));
                     if (removed) {
                         System.out.println("Material eliminado exitosamente.");
                     } else {
@@ -246,30 +199,18 @@ public class Sistema {
                 continue;
             }
 
-            System.out.print("Ingrese el ID: ");
-            String id = sc.nextLine().trim();
-            System.out.print("Ingrese el título: ");
-            String titulo = sc.nextLine().trim();
-            System.out.print("Ingrese el autor: ");
-            String autor = sc.nextLine().trim();
+            String tipo = switch (op) {
+                case 1 -> "libro";
+                case 2 -> "dvd";
+                default -> "";
+            };
 
-            switch (op) {
-                case 1 :
-                    System.out.print("Ingrese la editorial: ");
-                    String editorial = sc.nextLine().trim();
-                    System.out.print("Ingrese el código ISBN: ");
-                    String isbn = sc.nextLine().trim();
-                    libros.add(new Libro(id, titulo, autor, editorial, isbn));
-                    System.out.println("Libro registrado.");
-                
-                case 2 : 
-                    System.out.print("Ingrese el género: ");
-                    String genero = sc.nextLine().trim();
-                    System.out.print("Ingrese el formato: ");
-                    String formato = sc.nextLine().trim();
-                    dvds.add(new DvD(id, titulo, autor, genero, formato));
-                    System.out.println("DVD registrado.");
-                
+            try {
+                Material material = Materialfactory.crearMaterial(sc, tipo);
+                materiales.add(material);
+                System.out.println(tipo.substring(0, 1).toUpperCase() + tipo.substring(1) + " registrado.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
             }
             submenu = false;
         }
@@ -287,16 +228,15 @@ public class Sistema {
 
             int op = leerOpcion(sc, 1, 4);
             switch (op) {
-                case 1 :
+                case 1:
                     System.out.print("Ingrese el ID del usuario: ");
                     int idUsuario = leerOpcion(sc, 1000, 5000);
                     System.out.print("Ingrese el ID del material: ");
                     String idMaterial = sc.nextLine().trim();
 
                     Usuario usuario = buscarUsuario(idUsuario);
-                    String finalIdMaterial1 = idMaterial;
-                    Materiales material = Stream.concat(dvds.stream(), libros.stream())
-                            .filter(m -> m.getId().equals(finalIdMaterial1))
+                    Material material = materiales.stream()
+                            .filter(m -> m.getId().equals(idMaterial))
                             .findFirst()
                             .orElse(null);
 
@@ -315,13 +255,12 @@ public class Sistema {
                         material.setHabilitado(false);
                         System.out.println("Préstamo registrado.");
                     }
-                
-                case 2 :
+                    break;
+                case 2:
                     System.out.print("Ingrese el ID del material a devolver: ");
                     idMaterial = sc.nextLine().trim();
-                    String finalIdMaterial = idMaterial;
                     Prestamo prestamo = prestamos.stream()
-                            .filter(p -> p.getMaterial().getId().equals(finalIdMaterial) && p.isActivo())
+                            .filter(p -> p.getMaterial().getId().equals(idMaterial) && p.isActivo())
                             .findFirst()
                             .orElse(null);
                     if (prestamo != null) {
@@ -335,30 +274,29 @@ public class Sistema {
                     } else {
                         System.out.println("Préstamo no encontrado.");
                     }
-                
-                case 3 :
+                    break;
+                case 3:
                     if (prestamos.isEmpty()) {
                         System.out.println("No hay préstamos activos.");
                     } else {
                         System.out.println("****** Préstamos Activos ******");
-                        for (Prestamo p : prestamos) {
-                            if (p.isActivo()) {
-                                System.out.printf("Usuario: %s, Material: %s, Fecha de devolución: %s%n",
+                        prestamos.stream()
+                                .filter(Prestamo::isActivo)
+                                .forEach(p -> System.out.printf("Usuario: %s, Material: %s, Fecha de devolución: %s%n",
                                         p.getUsuario().getNombre(),
                                         p.getMaterial().getTitulo(),
-                                        p.getFechaDevolucion());
-                            }
-                        }
+                                        p.getFechaDevolucion()));
                     }
-                
-                case 4 :
+                    break;
+                case 4:
                     submenu = false;
+                    break;
             }
         }
     }
 
     private static Usuario buscarUsuario(int idUsuario) {
-        return Stream.concat(estudiantes.stream(), Stream.concat(profesores.stream(), visitantes.stream()))
+        return usuarios.stream()
                 .filter(u -> u.getIdBiblioteca() == idUsuario)
                 .findFirst()
                 .orElse(null);
