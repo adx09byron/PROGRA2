@@ -1,45 +1,42 @@
 package org.example;
 
-public class Profesor extends Usuario {
-    private String departamento;
-    private String tituloAcademico;
+import java.time.LocalDate;
 
-    public Profesor(String nombre, String apellido, int idBiblioteca, int edad, String correoElectronico, String departamento, String tituloAcademico) {
-        super(nombre, apellido, idBiblioteca, edad, correoElectronico);
-        this.setDepartamento(departamento);
-        this.setTituloAcademico(tituloAcademico);
+public class Prestamo {
+    private Materiales material;
+    private Usuario usuario;
+    private LocalDate fechaPrestamo;
+    private LocalDate fechaDevolucion;
+    private boolean activo;
+
+    public Prestamo(Material material, Usuario usuario, LocalDate fechaPrestamo, LocalDate fechaDevolucion) {
+        this.material = material;
+        this.usuario = usuario;
+        this.fechaPrestamo = fechaPrestamo;
+        this.fechaDevolucion = fechaDevolucion;
+        this.activo = true;
     }
 
-    @Override
-    public void mostrarCliente() {
-        System.out.println("Profesor: " + getNombre() + " " + getApellido() + "\nID: P" + getIdBiblioteca() + "\nEdad: " + getEdad() +
-                "\nCorreo: " + getCorreoElectronico() + "\nDepartamento: " + getDepartamento() + "\nTítulo Académico: " + getTituloAcademico());
+    public Materiales getMaterial(){ 
+        return material; 
+    }
+    public Usuario getUsuario(){
+        return usuario; 
+    }
+    public LocalDate getFechaDevolucion(){ 
+        return fechaDevolucion; 
+    }
+    public boolean isActivo(){
+        return activo; 
+    }
+    public void setActivo(boolean activo){ 
+        this.activo = activo; 
     }
 
-    @Override
-    public void mostrarDeudas() {
-
+    public double calcularMulta() {
+        if (usuario instanceof PrestamoStrategy strategy) {
+            return strategy.calcularMulta(fechaDevolucion, LocalDate.now());
+        }
+        return 0.0;
     }
-
-    @Override
-    public int getDiasMaximoPrestamo() {
-        return 14;
-    }
-
-    public String getDepartamento() {
-        return departamento;
-    }
-
-    public void setDepartamento(String departamento) {
-        this.departamento = departamento;
-    }
-
-    public String getTituloAcademico() {
-        return tituloAcademico;
-    }
-
-    public void setTituloAcademico(String tituloAcademico) {
-        this.tituloAcademico = tituloAcademico;
-    }
-
 }
