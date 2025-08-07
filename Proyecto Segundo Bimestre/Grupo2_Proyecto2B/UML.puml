@@ -1,0 +1,300 @@
+@startuml
+
+package Modelo {
+  class Butaca {
+    - numero : int
+    - fila: char
+    - ocupada: boolean
+    - salaId : int
+    - reservada : boolean
+
+    + isDisponible() : boolean
+  }
+
+  class Cliente {
+    - id : int
+    - nombre : String
+    - apellido : String
+    - cedula : String
+    - correo : String
+    - telefono : String
+
+    + getNombreCompleto(): String
+    + getCedula(): String
+  }
+
+  class Empleado {
+    - id : int
+    - nombre : String
+    - apellido : String
+    - cargo : String
+    - cedula : String
+    - usuario : String
+    - contraseña : String
+
+    +getNombreCompleto() : String
+  }
+
+  class Entrada {
+    - id : int
+    - clientId : int
+    - funcionId : int
+    - butacaId : int
+    - precio : double
+    - fechaCompra : LocalDate
+    - pagada : boolean
+  }
+
+  class Funcion {
+    - id : int
+    - peliculaId : int
+    - salaId : int
+    - fechaHora : LocalDateTime
+    - duracionMinutos : int
+    - precio double
+
+    + getFechaFin() : LocalDateTime
+  }
+
+  class Pago {
+   - id : int
+   - entradaId : int
+   - monto : double
+   - fechaPago : LocalDateTime
+   - metodoPago : String
+  }
+
+  class Pelicula {
+    - id : int
+    - titulo : String
+    - genero : String
+    - clasificacion : String
+    - duracionMinutos : int
+    - director : String
+    - sinopsis : String
+
+    + getDuracionFormateada() : String
+  }
+
+  class Sala {
+    - id : int
+    - nombre : String
+    - capacidad : int
+    - filas : int
+    - columnas : int
+    - habilitada : boolean
+  }
+
+  Cliente --> Entrada : realiza
+  Empleado --> Entrada : gestiona
+  Entrada --> Funcion : para
+  Entrada --> Butaca : asigna
+  Entrada --> Pago : pago
+
+  Funcion --> Pelicula : proyecta
+  Funcion --> Sala : se realiza en
+  Sala --> Butaca : contiene
+}
+
+package Controlador {
+    class CineControlador {
+    - peliculaControlador : PeliculaControlador
+    - empleadoControlador : EmpleadoControlador
+    - funcionControlador : FuncionControlador
+    - salaControlador : SalaControlador
+
+    + CineControlador()
+    + getPeliculaControlador() : PeliculaControlador
+    + getEmpleadoControlador() : EmpleadoControlador
+    + getFuncionControlador() : FuncionControlador
+    + getSalaControlador() : SalaControlador
+    + autenticarEmpleado(usuario : String, contraseña : String) : boolean
+    + obtenerPeliculasEnCartelera() : List<Pelicula>
+    + obtenerFuncionesPorPelicula(peliculaId : int) : List<Funcion>
+    + reservarAsiento(salaId : int, fila : char, numero : int) : boolean
+    }
+
+    class EmpleadoControlador {
+    - empleados : List<Empleado>
+    - siguienteId : int
+    - empleadoActual : Empleado
+
+    + autenticar(usuario : String, contraseña : String) : boolean
+    + getEmpleadoActual() : Empleado
+    + cerrarSesion() : void
+    + crear(Empleado) : void
+    + obtenerPorId(id : int) : Empleado
+    + obtenerTodos() : List<Empleado>
+    + actualizar(Empleado) : void
+    + eliminar(id : int) : void
+    + cargarDesdeArchivo(ruta : String) : List<Empleado>
+    + guardarEnArchivo(lista : List<Empleado>, ruta : String) : void
+    }
+
+    class FuncionControlador {
+    - funciones : List<Funcion>
+    - siguienteId : int
+
+    + obtenerFuncionesPorPelicula(peliculaId : int) : List<Funcion>
+    + obtenerFuncionesPorSala(salaId : int) : List<Funcion>
+    + crear(Funcion) : void
+    + obtenerPorId(id : int) : Funcion
+    + obtenerTodos() : List<Funcion>
+    + actualizar(Funcion) : void
+    + eliminar(id : int) : void
+    + cargarDesdeArchivo(ruta : String) : List<Funcion>
+    + guardarEnArchivo(lista : List<Funcion>, ruta : String) : void
+    }
+
+    class PeliculaControlador {
+    - peliculas : List<Pelicula>
+    - siguienteId : int
+
+    + crear(Pelicula) : void
+    + obtenerPorId(id : int) : Pelicula
+    + obtenerTodos() : List<Pelicula>
+    + actualizar(Pelicula) : void
+    + eliminar(id : int) : void
+    + cargarDesdeArchivo(ruta : String) : List<Pelicula>
+    + guardarEnArchivo(lista : List<Pelicula>, ruta : String) : void
+    }
+
+    class SalaControlador{
+    -List<Sala> salas
+    -Map<Integer, List<Butaca>> butacasPorSala
+    -int siguienteId
+
+    + SalaControlador()
+    - cargarSalas()
+    - generarButacas()
+    + obtenerButacasPorSala(int salaId): List<Butaca>
+    + obtenerButaca(int salaId, char fila, int numero): Butaca
+    + reservarButaca(int salaId, char fila, int numero): boolean
+    + ocuparButaca(int salaId, char fila, int numero): boolean
+    + liberarButaca(int salaId, char fila, int numero)
+    + crear(Sala sala)
+    + obtenerPorId(int id): Sala
+    + obtenerTodos(): List<Sala>
+    + actualizar(Sala sala)
+    + eliminar(int id)
+    + cargarDesdeArchivo(String ruta): List<Sala>
+    + guardarEnArchivo(List<Sala> lista, String ruta)
+    }
+
+    interface ICrudOperations {
+    + crear(T item): void
+    + obtenerPorId(int id): T
+    + obtenerTodos(): List<T>
+    + actualizar(T item): void
+    + eliminar(int id): void
+    }
+
+    interface IFileLoader {
+    + cargarDesdeArchivo(String rutaArchivo): List<T>
+    + guardarEnArchivo(List<T> lista, String rutaArchivo): void
+    }
+
+    CineControlador --> EmpleadoControlador
+        CineControlador --> FuncionControlador
+        CineControlador --> PeliculaControlador
+        CineControlador --> SalaControlador
+
+        EmpleadoControlador ..|> ICrudOperations
+        EmpleadoControlador ..|> IFileLoader
+
+        FuncionControlador ..|> ICrudOperations
+        FuncionControlador ..|> IFileLoader
+
+        PeliculaControlador ..|> ICrudOperations
+        PeliculaControlador ..|> IFileLoader
+   }
+
+   package View {
+    class Pagos {
+      -funcion: Funcion
+      -pelicula: Pelicula
+      -asientosSeleccionados: List<Butaca>
+      +Pagos(Funcion, Pelicula, List<Butaca>)
+      -setupCustomComponents(): void
+      -procesarPago(): void
+      -confirmarCompra(): void
+    }
+
+    class UbicacionAsientos {
+      -funcion: Funcion
+      -pelicula: Pelicula
+      -botonesAsientos: JButton[][]
+      -asientosSeleccionados: List<Butaca>
+      +UbicacionAsientos(Funcion, Pelicula)
+      -setupCustomComponents(): void
+      -cargarAsientos(): void
+      -toggleAsiento(Butaca, JButton): void
+      -continuarCompra(): void
+    }
+    class VentanaInicio {
+      +VentanaInicio()
+      -setupEventos(): void
+      -customizeAppearance(): void
+      -iniciarSesion(): void
+    }
+
+    class VentanaPelicula {
+      -pelicula: Pelicula
+      +VentanaPelicula(Pelicula)
+      -configurarVentana(): void
+      -cargarDatosPelicula(): void
+      -cargarFunciones(): void
+      -abrirSeleccionAsientos(Funcion): void
+    }
+
+    class VentanaPrincipal {
+      +VentanaPrincipal()
+      -configurarVentana(): void
+      -cargarDatosEmpleado(): void
+      -cargarPeliculas(): void
+      -abrirVentanaPelicula(Pelicula): void
+      -cerrarSesion(): void
+    }
+
+    class Funcion {
+      +getFechaHora(): LocalDateTime
+      +getSalaId(): int
+      +getPrecio(): double
+    }
+    class Pelicula {
+      +getTitulo(): String
+      +getDirector(): String
+      +getGenero(): String
+      +getClasificacion(): String
+      +getDuracionFormateada(): String
+      +getSinopsis(): String
+      +getId(): int
+    }
+
+    class Butaca {
+      +getSalaId(): int
+      +getFila(): char
+      +getNumero(): int
+      +isOcupada(): boolean
+      +isReservada(): boolean
+      +toString(): String
+    }
+
+    VentanaInicio --> VentanaPrincipal: crea >
+    VentanaPrincipal --> VentanaPelicula: crea >
+    VentanaPelicula --> UbicacionAsientos: crea >
+    UbicacionAsientos --> Pagos: crea >
+
+
+    VentanaPelicula --> Pelicula: contiene
+    VentanaPelicula --> Funcion: usa
+    UbicacionAsientos --> Funcion: contiene
+    UbicacionAsientos --> Pelicula: contiene
+    UbicacionAsientos --> Butaca: maneja
+    Pagos --> Funcion: contiene
+    Pagos --> Pelicula: contiene
+    Pagos --> Butaca: maneja
+
+}
+
+@enduml
