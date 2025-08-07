@@ -1,0 +1,7 @@
+1|Admin|Sistema|Administrador|1234567890|admin|admin123
+2|Domenica|Iza|Cajera|1795283640|domenica.iza|domenica123
+3|Priscila|Morales|Cajera|1741938652|priscila.morales|priscila123
+4|Kevin|Nuez|Cajero|1775049281|kevin.nuez|kevin123
+5|Luis|Pacheco|Cajero|1738906145|luis.pacheco|luis123
+6|Alex|Pogo|Cajero|1762183709|alex.pogo|alex123
+7|Byron|Salazar|Cajero|1756032184|byron.salazar|byron123
